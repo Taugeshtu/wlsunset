@@ -235,6 +235,11 @@ static void recalc_stops(struct context *ctx, time_t now) {
 		ctx->sun.sunset = sun.sunset + day;
 		ctx->sun.night = sun.night + day;
 
+		if (ctx->config.duration > 0) {
+			ctx->sun.dawn = ctx->sun.sunrise - ctx->config.duration;
+			ctx->sun.night = ctx->sun.sunset + ctx->config.duration;
+		}
+
 		if (ctx->condition == MIDNIGHT_SUN) {
 			// Yesterday had no sunset, so remove our sunrise.
 			ctx->sun.dawn = day;
@@ -917,7 +922,7 @@ static const char usage[] = "usage: %s [options]\n"
 "  -e <elevation> set solar elevation for twilight transition (default: -6.0)\n"
 "  -S <sunrise>   set manual sunrise (e.g. 06:30)\n"
 "  -s <sunset>    set manual sunset (e.g. 18:30)\n"
-"  -d <duration>  set manual duration in seconds (e.g. 1800)\n"
+"  -d <duration>  set transition duration in seconds (e.g. 1800)\n"
 "  -g <gamma>     set gamma (default: 1.0)\n";
 
 int main(int argc, char *argv[]) {
